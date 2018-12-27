@@ -18,6 +18,7 @@ class Boid{
    
     }
 
+
     align(steeringForce, range){
         let avgVel = createVector();//A vector for average velocity 
         let total = 0;//number of boids in range
@@ -52,8 +53,9 @@ class Boid{
         }
         if(total > 0){
             avgPos.div(total);
-           // avgPos.setMag(this.maxSpeed);
-            steeringForce.add(avgPos.sub(this.position));
+            steeringForce = avgPos.sub(this.position)
+            steeringForce.setMag(this.maxSpeed);
+            steeringForce.sub(this.velocity);
             steeringForce.limit(this.maxForce);
         }
         return steeringForce;
@@ -83,6 +85,7 @@ class Boid{
         this.position.add(this.velocity);
 
         this.velocity.add(this.acceleration)
+      //  this.velocity.setMag(this.maxSpeed);
      
     }
 
