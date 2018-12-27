@@ -2,7 +2,7 @@ const flock = [];
 
 function setup() {
 //put setup code here
-    createCanvas(640, 360);
+    createCanvas(900, 900);
     for(i = 0; i < 50; i++){
         flock.push(new Boid());
     }
@@ -13,8 +13,8 @@ function draw() {
     background(102);
 
     for (let boid of flock){
-        boid.align();
-        boid.update();
-        boid.show();
+        boid.correctPosition();
+        boid.applyForce(boid.getSteeringForce(flock)); //update boid's position and velocity vector by applying given force
+        boid.show();    // draw boid on the screen
     }
 }
