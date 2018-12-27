@@ -2,15 +2,16 @@ const flock = [];
 
 function setup() {
 //put setup code here
-    createCanvas(900, 900);
-    for(i = 0; i < 50; i++){
+    createCanvas(600, 600);
+    for(i = 0; i < 60; i++){
         flock.push(new Boid());
     }
+
 }
 
 function draw() {
 //put drawing code here
-    background(102);
+    background(0);
 
     for (let boid of flock){
         boid.correctPosition();

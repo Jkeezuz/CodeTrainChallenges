@@ -5,13 +5,13 @@ class Boid{
         this.acceleration = createVector();
         this.velocity = p5.Vector.random2D();
         this.velocity.setMag(random(3,3.5));
-        this.maxSpeed = 4;
+        this.maxSpeed = 2;
         this.maxForce = 0.2;
     }
 
     show() {
-        strokeWeight(4);
-        stroke(255);
+        strokeWeight(8);
+        stroke(125,125,0);
         point(this.position.x, this.position.y);
         //TODO: IMPLEMENT DRAWING BOID AS A TRIANGLE
         //FACING THE DIRECTION OF VELOCITY
@@ -34,10 +34,15 @@ class Boid{
             //Steering force is equal to the substraction result of average vector - this boid's velocity vector
             //Force boids to always go with maximum speed
             avgVel.setMag(this.maxSpeed);
-            steeringForce =  avgVel.sub(this.velocity);
+
+          //  steeringForce =  avgVel.sub(this.velocity);
+
+            avgVel.sub(this.velocity);
+            avgVel.limit(this.maxForce);
+            steeringForce.add(avgVel);
             //Limit the steering force so the boid doesnt instantly start going with
             //the velocity of first neighbour
-            steeringForce.limit(this.maxForce);
+          //  steeringForce.limit(this.maxForce);
         }
         return steeringForce;
     }
@@ -53,21 +58,45 @@ class Boid{
         }
         if(total > 0){
             avgPos.div(total);
-            steeringForce = avgPos.sub(this.position)
-            steeringForce.setMag(this.maxSpeed);
-            steeringForce.sub(this.velocity);
-            steeringForce.limit(this.maxForce);
+            avgPos.sub(this.position);
+          //  avgPos.setMag(this.maxSpeed);
+          //  avgPos.sub(this.velocity);
+            //we should force our boid to rotate towards the avg position
+            avgPos.limit(this.maxForce);
+            steeringForce.add(avgPos);
+       //     steeringForce = avgPos.sub(this.position)
+         //   steeringForce.setMag(this.maxSpeed);
+         //   steeringForce.sub(this.velocity);
+         //   steeringForce.limit(this.maxForce);
         }
         return steeringForce;
     }
+    separation(steeringForce, range){
+        let separateVec = createVector();
+        let distance = 0;
+        for(let other_boid of flock){
+            distance = dist(this.position.x,this.position.y , other_boid.position.x, other_boid.position.y);
+            if(other_boid != this && distance <= range){
+                separateVec = createVector( this.position.x - other_boid.position.x   ,  this.position.y  -  other_boid.position.y) ;
+                distance = (1/distance);
+                separateVec.mult(distance);
+                separateVec.limit(this.maxForce);
+                steeringForce.add(separateVec);
+            }
+        }
+        return steeringForce;
+    }
+
+    
     getSteeringForce(boids) {
         let range = 40; //Range of visibility for a single boid
         let steeringForce = createVector(); //A vector that describes the steering force, that will be applied to the boid
         //1. Alignment
-         steeringForce =  this.align(steeringForce, range);
+           //steeringForce = this.align(steeringForce, range);
          //2.Cohesion
-         steeringForce = this.cohesion(steeringForce, range);
+           steeringForce = this.cohesion(steeringForce, range);
          //3.Separation
+          // steeringForce = this.separation(steeringForce, range);
          return steeringForce;
     }
 
@@ -85,7 +114,7 @@ class Boid{
         this.position.add(this.velocity);
 
         this.velocity.add(this.acceleration)
-      //  this.velocity.setMag(this.maxSpeed);
+        this.velocity.setMag(this.maxSpeed);
      
     }
 
